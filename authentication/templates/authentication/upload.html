@@ -1,0 +1,64 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Sign Recognition</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+    <script>
+        function showLoader() {
+            document.getElementById("loader").classList.add("show");
+        }
+
+        function hideLoader() {
+            document.getElementById("loader").classList.remove("show");
+        }
+
+        // Show loader when form is submitted
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function() {
+                showLoader();
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <h1>Upload Traffic Sign Image</h1>
+
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="image">Select Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            
+            <button type="submit">Recognize</button>
+        </form>
+
+        <div id="loader" class="loader">Processing your image...</div>
+
+        {% if result %}
+        <div class="image-container">
+            <h2>Uploaded Image:</h2>
+            <img src="{{ file_url }}" alt="Uploaded Image" style="width: 300px; height: auto;">
+        </div>
+
+        <div class="result">
+            <h2>Recognition Result:</h2>
+            <p><strong>Sign:</strong> {{ result }}</p>
+            <p><strong>Confidence:</strong> {{ confidence|floatformat:2 }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
+

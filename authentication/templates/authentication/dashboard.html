@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upload and recognize traffic sign images using our AI-powered Traffic Signboard Instructor. Powered by Infosys Springboard.">
+    <meta name="keywords" content="Traffic Sign Recognition, AI Traffic Signs, Traffic Signboard Instructor">
+    <meta name="author" content="Traffic Signboard Instructor Team">
+    <title>Traffic Signboard Instructor</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Alert Messages -->
+    {% for message in messages %}
+    <div class="alert alert-dismissible alert-info mx-3 mt-3">
+        <span><strong>Message:</strong> {{ message }}</span>
+        <button type="button" class="btn-close" aria-label="Close" onclick="closeAlert(this)"></button>
+    </div>
+    {% endfor %}
+
+    <!-- Header Section -->
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 m-0"><a href="/" class="text-white text-decoration-none">Traffic Signboard Instructor</a></h1>
+            <nav>
+                <ul class="nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a href="/signout" class="nav-link text-white">Sign Out</a></li>
+                    {% else %}
+                    <li class="nav-item"><a href="/signup" class="btn btn-primary">Get Started</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    {% if user.is_authenticated %}
+    <main class="container my-5">
+        <section class="text-center">
+            <h1 class="display-4">Welcome, {{ user.username }}!</h1>
+            <p class="lead">Upload traffic sign images, and let our AI-powered tool recognize them for you.</p>
+        </section>
+
+        <section class="mt-4">
+            <h2 class="mb-3">Upload Traffic Sign Image</h2>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="{% url 'upload_image' %}" method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                        {% csrf_token %}
+                        <input type="file" name="image" accept="image/*" class="form-control mb-3" required>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-upload"></i> Upload Image
+                        </button>
+                    </form>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mt-3">
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+    {% else %}
+    <main class="container text-center my-5">
+        <h1 class="display-5">Access Restricted</h1>
+        <p class="lead">Please log in to use our features.</p>
+        <a href="/login" class="btn btn-primary">Log In</a>
+    </main>
+    {% endif %}
+
+    <!-- Footer Section -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="mb-2">
+                <a href="#" class="text-white mx-2 text-decoration-none">Privacy Policy</a>
+                <a href="#" class="text-white mx-2 text-decoration-none">Cookie Notice</a>
+                <a href="#" class="text-white mx-2 text-decoration-none">About</a>
+                <a href="#" class="text-white mx-2 text-decoration-none">Contact</a>
+            </div>
+            <p class="mb-0">&copy; 2024 Traffic Signboard Instructor. Powered by Infosys Springboard.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Alerts -->
+    <script>
+        function closeAlert(button) {
+            const alertBox = button.parentElement;
+            alertBox.style.opacity = '0';
+            setTimeout(() => alertBox.remove(), 300);
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
