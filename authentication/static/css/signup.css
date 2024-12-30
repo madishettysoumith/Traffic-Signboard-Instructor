@@ -5,10 +5,35 @@
   padding: 0;
   font-family: 'Roboto', Arial, sans-serif;
 }
-html,body{
+
+html, body {
   height: 100%;
 }
 
+body {
+  position: relative;
+  overflow: hidden;
+  background: url("http://127.0.0.1:8000/static/images/home2.jpg") no-repeat center center fixed;
+  background-size: cover;
+
+  /* Centering the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Black overlay with 60% opacity */
+  z-index: -1; /* Keeps the overlay behind content */
+}
+
+/* Home Button */
 .home-btn {
   position: absolute;
   top: 20px;
@@ -23,34 +48,17 @@ html,body{
   font-size: 1em;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
-body {
-  position: relative;
-  overflow: hidden;
-  background: url("http://127.0.0.1:8000/static/images/home2.jpg") no-repeat center center fixed;
-  background-size: cover;
-  
-  /* Centering the container */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+.home-btn:hover {
+  background-color: #357ABD;
+  box-shadow: 0 5px 10px rgba(74, 144, 226, 0.4);
 }
 
-body::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);  /* Black overlay with 50% opacity */
-  z-index: -1;  /* Keeps the overlay behind content */
-}
-
-/* Content container styles */
+/* Container Styles */
 .container {
   max-width: 400px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9); /* Light background for content */
+  background: rgba(255, 255, 255, 0.95); /* Slightly opaque white */
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -62,11 +70,7 @@ body::after {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* Make sure other elements are also positioned properly */
-header, .main-content, footer {
-  position: relative;
-  z-index: 1; /* Keeps all main content above the background */
-}
+/* Form Title */
 .form-title {
   text-align: center;
   margin-bottom: 20px;
@@ -75,6 +79,7 @@ header, .main-content, footer {
   font-weight: bold;
 }
 
+/* Form Group */
 .form-group {
   margin-bottom: 15px;
 }
@@ -101,6 +106,19 @@ header, .main-content, footer {
   box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
 }
 
+.form-group .error {
+  color: red; /* Bright red color for errors */
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+/* Highlight input field with error */
+.form-group input.error-input {
+  border-color: red; /* Highlight input with error */
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5); /* Red shadow for error */
+}
+
+/* Buttons */
 .btn-primary {
   display: inline-block;
   width: 100%;
@@ -115,7 +133,12 @@ header, .main-content, footer {
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.btn-primary:hover {
+.btn-primary:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-primary:hover:not(:disabled) {
   background-color: #357ABD;
   box-shadow: 0 8px 16px rgba(74, 144, 226, 0.4);
 }
@@ -133,15 +156,18 @@ header, .main-content, footer {
   align-items: center;
 }
 
-.alert-dismissible .close {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-  color: #000;
+.alert .error {
+  color: red; /* Red for errors inside the alert */
+  font-size: 1em;
 }
 
-/* User Link Styles */
+/* Success Message */
+.success {
+  color: #28a745; /* Green for success messages */
+  font-size: 0.9em;
+}
+
+/* User Link */
 .user-link {
   text-align: center;
   margin-top: 20px;
