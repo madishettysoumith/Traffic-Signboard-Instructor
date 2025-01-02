@@ -1,23 +1,18 @@
-#Uploading Traffic Signboard Images
-To upload an image of a traffic sign for recognition, follow these steps:
+# Traffic Signboard Instructor
 
-#Log in to the Application:
+## Project Description
+This project is a Django-based application designed to recognize and classify traffic signs from uploaded images.
 
-Ensure you are logged into the application using your account. If you don't have an account, please sign up.
-#Navigate to the Upload Section:
+## Setup Instructions
+### Step 1: Clone the Repository
+$ git clone <repository_url>
 
-After logging in, go to the "Upload" section or any page where the image upload option is provided.
-#Upload Image:
+### Step 2: Create and Activate a Virtual Environment
+On Windows:
+$ python -m venv venv
 
-Click the "Choose File" button and select an image of a traffic sign from your device.
-Supported image formats: .jpg, .jpeg, .png.
-#Submit the Image:
-
-After selecting the image, click the "Submit" button to upload.
-The application will process the image and display the recognized traffic sign along with its meaning.
-#View Results:
-
-Once the image is processed, you will be shown the traffic sign along with details about the sign's meaning, possible actions, and any relevant traffic rules.
-#Repeat the Process:
-
-You can upload additional images for further recognition.
+## How to Upload Traffic Sign Images
+Follow these steps to upload a traffic sign image for recognition:
+1. **Log in to the Application**
+2. **Navigate to the Upload Section**
+3. **Upload the Image**
