@@ -1,17 +1,24 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.core.mail import EmailMessage, send_mail
-from base import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import authenticate, login, logout
-from . tokens import generate_token
+from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
+from django.utils import timezone
+from datetime import timedelta
+from django.core.exceptions import ValidationError
+from base import settings
+from .tokens import generate_token
 from .utils import predict_traffic_sign
+import json
+
 # Create your views here.ac
 def home(request):
     return render(request,"authentication/index.html")
@@ -112,6 +119,26 @@ def signout(request):
 
 def dashboard(request):
     return render(request, "authentication/dashboard.html")
+
+@csrf_exempt
+def validate_field(request, field):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            value = data.get("value", "").strip()
+            exists = False
+
+            if field == "username":
+                exists = User.objects.filter(username=value).exists()
+            elif field == "email":
+                exists = User.objects.filter(email=value).exists()
+
+            return JsonResponse({"exists": exists})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
 
 
 
