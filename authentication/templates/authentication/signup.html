@@ -28,32 +28,32 @@
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                <p class="error username-error"></p>
+                <p class="error username-error"></p> <!-- Error message for username -->
             </div>
             <div class="form-group">
                 <label for="fname">First Name</label>
                 <input type="text" id="fname" name="fname" placeholder="Enter your first name" required>
-                <p class="error first-name-error"></p>
+                <p class="error first-name-error"></p> <!-- Error message for first name -->
             </div>
             <div class="form-group">
                 <label for="lname">Last Name</label>
                 <input type="text" id="lname" name="lname" placeholder="Enter your last name" required>
-                <p class="error last-name-error"></p>
+                <p class="error last-name-error"></p> <!-- Error message for last name -->
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email address" required>
-                <p class="error email-error"></p>
+                <p class="error email-error"></p> <!-- Error message for email -->
             </div>
             <div class="form-group">
                 <label for="pass1">Password</label>
                 <input type="password" id="pass1" name="pass1" placeholder="Enter your password" required>
-                <p class="error password-error"></p>
+                <p class="error password-error"></p> <!-- Error message for password -->
             </div>
             <div class="form-group">
                 <label for="pass2">Confirm Password</label>
                 <input type="password" id="pass2" name="pass2" placeholder="Confirm your password" required>
-                <p class="error confirm-password-error"></p>
+                <p class="error confirm-password-error"></p> <!-- Error message for confirm password -->
             </div>
             <button type="submit" class="btn-primary" id="submitBtn" disabled>Sign Up</button>
         </form>
@@ -62,7 +62,7 @@
         </p>
     </div>
 
-    <!-- JavaScript for Alerts and Form Validation -->
+    <!-- JavaScript for Alerts and Validation -->
     <script>
         // Close Alert Box
         function closeAlert(button) {
@@ -71,7 +71,6 @@
             setTimeout(() => alertBox.remove(), 300);
         }
 
-        // Form Validation
         const form = document.getElementById("signupForm");
         const username = document.getElementById("username");
         const fname = document.getElementById("fname");
@@ -81,9 +80,9 @@
         const pass2 = document.getElementById("pass2");
         const submitBtn = document.getElementById("submitBtn");
 
+        // Validate empty fields
         function validateEmptyFields() {
             let allValid = true;
-
             const fields = [
                 { element: username, errorClass: ".username-error", message: "Username cannot be empty." },
                 { element: fname, errorClass: ".first-name-error", message: "First Name cannot be empty." },
@@ -106,8 +105,21 @@
             return allValid;
         }
 
+        // Validate username (allow alphanumeric, underscores, hyphens, and periods)
+        function validateUsername() {
+            const usernameRegex = /^[a-zA-Z0-9_.-]+$/;  // Allow letters, numbers, underscores, hyphens, periods
+            const error = document.querySelector(".username-error");
+            if (!usernameRegex.test(username.value)) {
+                error.textContent = "Username must be alphanumeric";
+                return false;
+            }
+            error.textContent = "";
+            return true;
+        }
+
+        // Validate email format
         function validateEmail() {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;  // Updated regex for email validation
             const error = document.querySelector(".email-error");
             if (!emailRegex.test(email.value)) {
                 error.textContent = "Enter a valid email address.";
@@ -117,6 +129,7 @@
             return true;
         }
 
+        // Validate password
         function validatePassword() {
             const error = document.querySelector(".password-error");
             const confirmError = document.querySelector(".confirm-password-error");
@@ -133,13 +146,61 @@
             return true;
         }
 
-        function validateForm() {
-            const isEmptyValid = validateEmptyFields();
-            const isEmailValid = validateEmail();
-            const isPasswordValid = validatePassword();
-            submitBtn.disabled = !(isEmptyValid && isEmailValid && isPasswordValid);
+        // Async function to check if fields are available (e.g., username and email)
+        async function checkFieldAvailability(field, value, errorClass, errorMessage) {
+            const errorElement = document.querySelector(errorClass);
+            if (!value.trim()) {
+                errorElement.textContent = `${field} cannot be empty.`;
+                return false;
+            }
+
+            try {
+                const response = await fetch(`/validate/${field}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({ value: value })
+                });
+
+                const data = await response.json();
+                if (data.exists) {
+                    errorElement.textContent = errorMessage;
+                    return false;
+                } else {
+                    errorElement.textContent = "";
+                    return true;
+                }
+            } catch (error) {
+                console.error("Error validating field:", error);
+                errorElement.textContent = "Error validating field.";
+                return false;
+            }
         }
 
+        // Main form validation function
+        async function validateForm() {
+            const isEmptyValid = validateEmptyFields();
+            const isUsernameValid = validateUsername();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isUsernameAvailable = await checkFieldAvailability("username", username.value, ".username-error", "Username already exists.");
+            const isEmailAvailable = await checkFieldAvailability("email", email.value, ".email-error", "Email already exists.");
+
+            const passwordsMatch = pass1.value === pass2.value;
+            const passwordErrorElement = document.querySelector(".confirm-password-error");
+
+            if (!passwordsMatch) {
+                passwordErrorElement.textContent = "Passwords do not match.";
+            } else {
+                passwordErrorElement.textContent = "";
+            }
+
+            submitBtn.disabled = !(isEmptyValid && isUsernameValid && isEmailValid && isPasswordValid && isUsernameAvailable && isEmailAvailable && passwordsMatch);
+        }
+
+        // Add event listeners for real-time validation
         form.addEventListener("input", validateForm);
     </script>
 </body>
