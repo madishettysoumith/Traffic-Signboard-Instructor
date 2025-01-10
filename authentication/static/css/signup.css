@@ -186,3 +186,15 @@ body::after {
   color: #0056b3;
   text-decoration: underline;
 }
+
+/* Error Placement Below Input Fields */
+.form-group input.error-input ~ .error {
+  display: block;
+  margin-top: 5px;
+}
+
+/* Error message for username, email, and other fields should align like the first name and last name */
+.form-group input.error-input ~ .error {
+  color: red;
+  font-size: 0.9em;
+}
